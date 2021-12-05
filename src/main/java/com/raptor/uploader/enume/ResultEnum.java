@@ -11,10 +11,12 @@ public enum ResultEnum {
 
     // FILE UPLOAD ERROR
     FILE_INFO_INSERT_ERROR("F0001", "文件信息插入失败"),
-    FILE_PATH_IS_NULL("F0002", "文件保存路径为空"),
-    FILE_EXTENSION_NOT_ACCEPT("F0003", "此类型文件不可上传"),
-    FILE_SIZE_LARGER("F0004", "文件超过限制大小"),
-    FILE_NAME_LONGER("F0005", "文件名过长");
+    FILE_NOT_EXIST("F0002", "文件不存在"),
+    FILE_PATH_IS_NULL("F0003", "文件保存路径为空"),
+    FILE_EXTENSION_NOT_ACCEPT("F0004", "此类型文件不可上传"),
+    FILE_SIZE_LARGER("F0005", "文件超过限制大小"),
+    FILE_NAME_LONGER("F0006", "文件名过长"),
+    FILE_IO_EXCEPTION("F0007", "文件上传失败，请重试");
     private String code;
     private String msg;
 

@@ -1,11 +1,13 @@
 package com.raptor.uploader.controller;
 
+import com.raptor.uploader.entity.FileInfo;
+import com.raptor.uploader.enume.ResultEnum;
 import com.raptor.uploader.service.FileInfoService;
+import com.raptor.uploader.service.UploaderService;
 import com.raptor.uploader.utils.response.Result;
 import com.raptor.uploader.utils.response.ResultUtil;
-import com.raptor.uploader.utils.uploader.FileUploadUtils;
-import com.raptor.uploader.utils.uploader.FilenameUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.apache.ibatis.annotations.Param;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -17,28 +19,48 @@ import java.io.IOException;
  * @date 2021/12/4 16:35
  */
 @RestController
-@RequestMapping(value = "/upload")
 public class UploadController {
 
-    UploaderServer uploaderServer;
+    FileInfoService fileInfoService;
+    UploaderService uploaderService;
 
-    @Autowired
-    public UploadController(UploaderServer uploaderServer) {
-        this.uploaderServer = uploaderServer;
+    public UploadController(FileInfoService fileInfoService, UploaderService uploaderService) {
+        this.fileInfoService = fileInfoService;
+        this.uploaderService = uploaderService;
     }
 
     @PostMapping("/single")
-    public Result uploadSingleFile(MultipartFile file) throws IOException {
-        uploaderServer.upload(file);
+    public Result uploadSingleFile(@RequestParam("file") MultipartFile file, @RequestParam(value = "md5", required = false) String md5) {
+        uploaderService.saveFile(file, md5);
         return ResultUtil.success(null);
     }
 
-    @PostMapping("/multiple")
-    public Result uploadMultipleFile(MultipartFile[] files) throws IOException {
-        for (MultipartFile file : files) {
-            uploaderServer.upload(file);
-        }
+    /**
+     * @param fileName 上传者机器的文件名
+     * @param md5      md5值
+     * @return
+     */
+    @PostMapping("/quick")
+    public Result uploadQuick(@RequestParam("fileName") String fileName, @RequestParam("md5") String md5) {
+        fileInfoService.insertByFileName(fileName, md5);
         return ResultUtil.success(null);
     }
+
+    @GetMapping("/exist/{md5}")
+    public Result existByMd5(@Param(value = "md5") String md5) {
+        FileInfo fileInfo = fileInfoService.selectByMd5(md5);
+        if (!ObjectUtils.isEmpty(fileInfo)) {
+            return ResultUtil.success(null);
+        } else {
+            return ResultUtil.defineFail(ResultEnum.FILE_NOT_EXIST);
+        }
+    }
+
+
+    @GetMapping("/block/single")
+    public Result uploadBigSingleFile() {
+        return ResultUtil.success(null);
+    }
+
 
 }

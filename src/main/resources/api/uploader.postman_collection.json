@@ -1,0 +1,167 @@
+{
+	"info": {
+		"_postman_id": "74609446-f956-4bcf-b399-7477830af3b6",
+		"name": "uploader",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "uploader",
+			"item": [
+				{
+					"name": "upload single file",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/C:/Users/Administrator/Pictures/Camera Roll/nginx.jpg"
+								},
+								{
+									"key": "md5",
+									"value": "asd",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/uploader/single",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"uploader",
+								"single"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "upload multiple files",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "files",
+									"type": "file",
+									"src": [
+										"/E:/material/文档/JVM/JVM/JVM中篇：字节码与类的加载篇/第1章：class文件结构.mmap",
+										"/E:/material/文档/JVM/JVM/JVM中篇：字节码与类的加载篇/第2章：字节码指令集与解析举例.mmap",
+										"/E:/material/文档/JVM/JVM/JVM中篇：字节码与类的加载篇/第3章：类的加载过程详解.mmap",
+										"/E:/material/文档/JVM/JVM/JVM中篇：字节码与类的加载篇/第4章：再谈类的加载器.mmap"
+									]
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/uploader/upload/multiple",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"uploader",
+								"upload",
+								"multiple"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "exist by md5",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/uploader/exist/xadsa",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"uploader",
+								"exist",
+								"xadsa"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "md5 second transfer",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "fileName",
+									"value": "sads",
+									"type": "text"
+								},
+								{
+									"key": "md5",
+									"value": "asd",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/uploader/quick",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"uploader",
+								"quick"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "select all fileinfos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/uploader/getAll/files",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"uploader",
+								"getAll",
+								"files"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

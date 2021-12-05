@@ -24,12 +24,13 @@ public class MapperTest {
     @Test
     public void context() {
         for (int i = 0; i < 30; i++) {
-            threadPoolExecutor.execute(new Runnable() {
-                @Override
-                public void run() {
-                    System.out.println("当前线程："+Thread.currentThread().getName());
-                }
-            });
+            //threadPoolExecutor.execute(new Runnable() {
+            //    @Override
+            //    public void run() {
+            //        System.out.println("当前线程："+Thread.currentThread().getName());
+            //    }
+            //});
+            System.out.println(System.nanoTime());
         }
     }
 }

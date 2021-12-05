@@ -1,5 +1,6 @@
 package com.raptor.uploader.config.properties;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
@@ -16,5 +17,7 @@ public class FileConstraintsProperties {
     private String path;
     private Integer size;
     private String[] extension;
+    private String prefixUrl;
+    private Boolean folderRole;
 
 }

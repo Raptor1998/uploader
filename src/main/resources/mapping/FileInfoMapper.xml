@@ -54,6 +54,14 @@
     <select id="selectAll" resultMap="BaseResultMap">
         select file_id,
                file_original_name,
+               file_url,
+               file_upload_time
+        from file_info
+    </select>
+    <!--    Integer selectByMd5(String md5);-->
+    <select id="selectByMd5" resultMap="BaseResultMap">
+        select file_id,
+               file_original_name,
                file_union_name,
                file_real_path,
                file_suffix,
@@ -62,5 +70,6 @@
                file_upload_time,
                md5
         from file_info
+        where md5 = #{md5} limit 1
     </select>
 </mapper>
