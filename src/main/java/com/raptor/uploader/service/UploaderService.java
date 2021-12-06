@@ -52,7 +52,7 @@ public class UploaderService {
      * @param file
      * @param md5
      */
-    public void saveFile(MultipartFile file, String md5) {
+    public FileInfo saveFile(MultipartFile file, String md5) {
         checkFile(file);
         try {
             String extractFilename = extractFilename(file.getOriginalFilename(), md5);
@@ -66,9 +66,11 @@ public class UploaderService {
             fileInfo.setFileSize(file.getSize());
             fileInfo.setFileUploadTime(new Date());
             fileInfo.setMd5(md5);
-            FileInfoService.insert(fileInfo);
+            FileInfo insert = FileInfoService.insert(fileInfo);
+            return insert;
         } catch (Exception e) {
             log.error("文件保存时出错，重试");
+            e.printStackTrace();
             throw new DescribeException(ResultEnum.FILE_IO_EXCEPTION);
         }
     }
@@ -109,7 +111,7 @@ public class UploaderService {
         String extension = getExtension(fileName);
         String newFilename;
         if (fileConstraintsProperties.getFolderRole() == true) {
-            newFilename = DateFormatUtils.format(new Date(), "/yyyy/MM/dd") + "/" + encodingFilename(fileName, md5) + "." + extension;
+            newFilename = DateFormatUtils.format(new Date(), "yyyy/MM/dd") + "/" + encodingFilename(fileName, md5) + "." + extension;
         } else {
             newFilename = encodingFilename(fileName, md5) + "." + extension;
         }
@@ -145,6 +147,30 @@ public class UploaderService {
         if (chunk >= chunks) {
             throw new DescribeException(ResultEnum.FILE_IO_EXCEPTION);
         }
+        String newFilename = extractFilename(originalName, md5);
+
+        log.info("检查是否全村存储完成");
+        poolExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                Integer blockNum = blockFileService.selectBlockNum(md5);
+                log.info("已上传块数：{}，总块数：{}", blockNum, chunks);
+                if (!ObjectUtils.isEmpty(blockNum) && blockNum.equals(chunks)) {
+                    FileInfo fileInfo = new FileInfo();
+                    fileInfo.setFileOriginalName(originalName);
+                    fileInfo.setFileUnionName(newFilename);
+                    fileInfo.setFileRealPath(fileConstraintsProperties.getPath() + newFilename);
+                    fileInfo.setFileSuffix(getExtension(originalName));
+                    fileInfo.setFileUrl(newFilename);
+                    fileInfo.setFileSize(size);
+                    fileInfo.setFileUploadTime(new Date());
+                    fileInfo.setMd5(md5);
+                    FileInfoService.insert(fileInfo);
+                }
+            }
+        });
+
+
         BlockFile byChunkAndMd5 = blockFileService.findByChunkAndMd5(chunk, md5);
         if (!ObjectUtils.isEmpty(byChunkAndMd5)) {
             log.info("分片已经存在，chunk：{}，md5：{}", chunk, md5);
@@ -152,7 +178,6 @@ public class UploaderService {
         }
         try {
             InputStream inputStream = file.getInputStream();
-            String newFilename = extractFilename(originalName, md5);
             log.info("正在上传的文件：{}，unionName：{}，第{}块，共{}块", originalName, newFilename, chunk, chunks);
             RandomAccessFile randomAccessFile = null;
             randomAccessFile = new RandomAccessFile(fileConstraintsProperties.getPath() + newFilename, "rw");
@@ -176,7 +201,6 @@ public class UploaderService {
             blockFileService.insert(blockFile);
         } catch (Exception e) {
             e.printStackTrace();
-            throw new DescribeException(ResultEnum.FILE_IO_EXCEPTION);
         }
     }
 

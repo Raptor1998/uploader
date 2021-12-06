@@ -17,6 +17,7 @@ public class FileUtils {
      * @throws IOException
      */
     public static void write(String target, InputStream src) throws IOException {
+        mkdir(target);
         OutputStream os = new FileOutputStream(target);
         byte[] buf = new byte[1024];
         int len;
@@ -54,12 +55,12 @@ public class FileUtils {
         randomAccessFile.close();
     }
 
-    /**
-     * 生成随机文件名
-     *
-     * @return
-     */
-    public static String generateFileName() {
-        return UUID.randomUUID().toString();
+    private static void mkdir(String uploadDir) throws IOException {
+        File desc = new File(uploadDir);
+
+        if (!desc.getParentFile().exists()) {
+            desc.getParentFile().mkdirs();
+        }
+
     }
 }

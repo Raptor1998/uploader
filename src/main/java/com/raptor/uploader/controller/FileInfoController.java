@@ -27,6 +27,12 @@ public class FileInfoController {
         this.fileInfoService = fileInfoService;
     }
 
+    /**
+     * 所有的文件信息
+     * @param page 页码
+     * @param size 大小
+     * @return
+     */
     @GetMapping("/getAll/files")
     public Result getALlFiles(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int size) {
         Map<String, Object> map = fileInfoService.selectAll(page, size);

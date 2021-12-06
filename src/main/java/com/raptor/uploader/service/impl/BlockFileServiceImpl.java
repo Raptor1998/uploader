@@ -5,8 +5,11 @@ import com.raptor.uploader.enume.ResultEnum;
 import com.raptor.uploader.exception.DescribeException;
 import com.raptor.uploader.mapper.BlockFileMapper;
 import com.raptor.uploader.service.BlockFileService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import sun.rmi.runtime.Log;
 
 /**
  * @author raptor
@@ -14,6 +17,7 @@ import org.springframework.stereotype.Service;
  * @date 2021/12/6 16:08
  */
 @Service
+@Slf4j
 public class BlockFileServiceImpl implements BlockFileService {
 
     private BlockFileMapper blockFileMapper;
@@ -24,16 +28,24 @@ public class BlockFileServiceImpl implements BlockFileService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public BlockFile insert(BlockFile blockFile) {
-        int i = blockFileMapper.insert(blockFile);
-        if (i > 0) {
+        try {
+            int i = blockFileMapper.insert(blockFile);
             return blockFile;
+        } catch (Exception e) {
+            log.info("分片已经存在，数据库插入时出错");
+            throw new DescribeException(ResultEnum.FILE_INFO_INSERT_ERROR);
         }
-        throw new DescribeException(ResultEnum.FILE_INFO_INSERT_ERROR);
     }
 
     @Override
     public BlockFile findByChunkAndMd5(Integer chunk, String md5) {
         return blockFileMapper.findByChunkAndMd5(chunk, md5);
+    }
+
+    @Override
+    public Integer selectBlockNum(String md5) {
+        return blockFileMapper.selectBlockNum(md5);
     }
 }

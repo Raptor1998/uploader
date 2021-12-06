@@ -19,4 +19,6 @@ public interface BlockFileMapper {
     int updateByPrimaryKey(BlockFile record);
 
     BlockFile findByChunkAndMd5(@Param("chunk") Integer chunk, @Param("md5") String md5);
+
+    Integer selectBlockNum(@Param("md5") String md5);
 }

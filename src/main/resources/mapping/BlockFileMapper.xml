@@ -42,4 +42,11 @@
         where block_file_chunk = #{chunk}
           and block_file_md5 = #{md5}
     </select>
+
+    <!--    Integer selectBlockNum(@Param("md5") String md5);-->
+    <select id="selectBlockNum" resultType="Integer">
+        select count(block_file_id)
+        from block_file
+        where block_file_md5 = #{md5}
+    </select>
 </mapper>
