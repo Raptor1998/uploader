@@ -5,7 +5,6 @@ import com.raptor.uploader.entity.BlockFile;
 import com.raptor.uploader.entity.FileInfo;
 import com.raptor.uploader.enume.ResultEnum;
 import com.raptor.uploader.exception.DescribeException;
-import com.raptor.uploader.mapper.BlockFileMapper;
 import com.raptor.uploader.utils.uploader.FileUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -32,15 +31,15 @@ import java.util.concurrent.ThreadPoolExecutor;
 @Slf4j
 public class UploaderService {
 
-    private FileInfoService FileInfoService;
+    private FileInfoService fileInfoService;
     private BlockFileService blockFileService;
     private FileConstraintsProperties fileConstraintsProperties;
     private ThreadPoolExecutor poolExecutor;
     private static final int SIZE_UNIT = 1024 * 1024;
 
     @Autowired
-    public UploaderService(FileInfoService FileInfoService, BlockFileService blockFileService, FileConstraintsProperties fileConstraintsProperties, ThreadPoolExecutor poolExecutor) {
-        this.FileInfoService = FileInfoService;
+    public UploaderService(FileInfoService fileInfoService, BlockFileService blockFileService, FileConstraintsProperties fileConstraintsProperties, ThreadPoolExecutor poolExecutor) {
+        this.fileInfoService = fileInfoService;
         this.blockFileService = blockFileService;
         this.fileConstraintsProperties = fileConstraintsProperties;
         this.poolExecutor = poolExecutor;
@@ -66,7 +65,7 @@ public class UploaderService {
             fileInfo.setFileSize(file.getSize());
             fileInfo.setFileUploadTime(new Date());
             fileInfo.setMd5(md5);
-            FileInfo insert = FileInfoService.insert(fileInfo);
+            FileInfo insert = fileInfoService.insert(fileInfo);
             return insert;
         } catch (Exception e) {
             log.error("文件保存时出错，重试");
@@ -143,34 +142,11 @@ public class UploaderService {
     }
 
 
-    public void uploadWithBlock(String originalName, MultipartFile file, Integer chunks, Long size, Integer chunk, String md5) {
+    public BlockFile uploadWithBlock(String originalName, MultipartFile file, Integer chunks, Long size, Integer chunk, String md5) {
         if (chunk >= chunks) {
             throw new DescribeException(ResultEnum.FILE_IO_EXCEPTION);
         }
         String newFilename = extractFilename(originalName, md5);
-
-        log.info("检查是否全村存储完成");
-        poolExecutor.execute(new Runnable() {
-            @Override
-            public void run() {
-                Integer blockNum = blockFileService.selectBlockNum(md5);
-                log.info("已上传块数：{}，总块数：{}", blockNum, chunks);
-                if (!ObjectUtils.isEmpty(blockNum) && blockNum.equals(chunks)) {
-                    FileInfo fileInfo = new FileInfo();
-                    fileInfo.setFileOriginalName(originalName);
-                    fileInfo.setFileUnionName(newFilename);
-                    fileInfo.setFileRealPath(fileConstraintsProperties.getPath() + newFilename);
-                    fileInfo.setFileSuffix(getExtension(originalName));
-                    fileInfo.setFileUrl(newFilename);
-                    fileInfo.setFileSize(size);
-                    fileInfo.setFileUploadTime(new Date());
-                    fileInfo.setMd5(md5);
-                    FileInfoService.insert(fileInfo);
-                }
-            }
-        });
-
-
         BlockFile byChunkAndMd5 = blockFileService.findByChunkAndMd5(chunk, md5);
         if (!ObjectUtils.isEmpty(byChunkAndMd5)) {
             log.info("分片已经存在，chunk：{}，md5：{}", chunk, md5);
@@ -198,10 +174,28 @@ public class UploaderService {
             blockFile.setBlockFileChunk(chunk);
             blockFile.setBlockFileMd5(md5);
             blockFile.setUploadTime(new Date());
-            blockFileService.insert(blockFile);
+            BlockFile block = blockFileService.insert(blockFile);
+            return block;
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            Integer blockNum = blockFileService.selectBlockNum(md5);
+            log.info("已上传块数：{}，总块数：{}", blockNum, chunks);
+            if (!ObjectUtils.isEmpty(blockNum) && blockNum.equals(chunks)) {
+                FileInfo fileInfo = new FileInfo();
+                fileInfo.setFileOriginalName(originalName);
+                fileInfo.setFileUnionName(newFilename);
+                fileInfo.setFileRealPath(fileConstraintsProperties.getPath() + newFilename);
+                fileInfo.setFileSuffix(getExtension(originalName));
+                fileInfo.setFileUrl(newFilename);
+                fileInfo.setFileSize(size);
+                fileInfo.setFileUploadTime(new Date());
+                fileInfo.setMd5(md5);
+                fileInfoService.insert(fileInfo);
+            }
         }
+        return null;
     }
+
 
 }
