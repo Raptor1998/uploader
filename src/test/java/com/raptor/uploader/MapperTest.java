@@ -1,5 +1,6 @@
 package com.raptor.uploader;
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,5 +33,10 @@ public class MapperTest {
             //});
             System.out.println(System.nanoTime());
         }
+    }
+
+    @Test
+    public void context2() {
+        System.out.println(RandomStringUtils.randomNumeric(6));
     }
 }

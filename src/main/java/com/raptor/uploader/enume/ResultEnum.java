@@ -16,7 +16,8 @@ public enum ResultEnum {
     FILE_EXTENSION_NOT_ACCEPT("F0004", "此类型文件不可上传"),
     FILE_SIZE_LARGER("F0005", "文件超过限制大小"),
     FILE_NAME_LONGER("F0006", "文件名过长"),
-    FILE_IO_EXCEPTION("F0007", "文件上传失败，请重试");
+    FILE_IO_EXCEPTION("F0007", "文件上传失败，请重试"),
+    FILE_CHUNK_EXIST("F0008", "文件分片已经存在");
     private String code;
     private String msg;
 

@@ -1,15 +1,16 @@
 package com.raptor.uploader.service;
 
 import com.raptor.uploader.config.properties.FileConstraintsProperties;
+import com.raptor.uploader.entity.BlockFile;
 import com.raptor.uploader.entity.FileInfo;
 import com.raptor.uploader.enume.ResultEnum;
 import com.raptor.uploader.exception.DescribeException;
-import com.raptor.uploader.mapper.FileInfoMapper;
+import com.raptor.uploader.mapper.BlockFileMapper;
 import com.raptor.uploader.utils.uploader.FileUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,10 +18,9 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.Date;
-import java.util.UUID;
+import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * @author raptor
@@ -33,19 +33,29 @@ import java.util.UUID;
 public class UploaderService {
 
     private FileInfoService FileInfoService;
+    private BlockFileService blockFileService;
     private FileConstraintsProperties fileConstraintsProperties;
+    private ThreadPoolExecutor poolExecutor;
     private static final int SIZE_UNIT = 1024 * 1024;
 
     @Autowired
-    public UploaderService(FileInfoService FileInfoService, FileConstraintsProperties fileConstraintsProperties) {
+    public UploaderService(FileInfoService FileInfoService, BlockFileService blockFileService, FileConstraintsProperties fileConstraintsProperties, ThreadPoolExecutor poolExecutor) {
         this.FileInfoService = FileInfoService;
+        this.blockFileService = blockFileService;
         this.fileConstraintsProperties = fileConstraintsProperties;
+        this.poolExecutor = poolExecutor;
     }
 
-    public void saveFile(MultipartFile file,String md5) {
+    /**
+     * 完整的单个上传文件测试，并保存数据库
+     *
+     * @param file
+     * @param md5
+     */
+    public void saveFile(MultipartFile file, String md5) {
         checkFile(file);
         try {
-            String extractFilename = extractFilename(file.getOriginalFilename());
+            String extractFilename = extractFilename(file.getOriginalFilename(), md5);
             FileUtils.write(fileConstraintsProperties.getPath() + extractFilename, file.getInputStream());
             FileInfo fileInfo = new FileInfo();
             fileInfo.setFileOriginalName(file.getOriginalFilename());
@@ -63,7 +73,11 @@ public class UploaderService {
         }
     }
 
-
+    /**
+     * 检查问价是否符合上传标准
+     *
+     * @param file
+     */
     private void checkFile(MultipartFile file) {
         if (StringUtils.trimToNull(fileConstraintsProperties.getPath()) == null) {
             log.error("文件保存路径未配置");
@@ -84,28 +98,86 @@ public class UploaderService {
 
     }
 
-
-    private final String extractFilename(String fileName) {
+    /**
+     * 生成unionName   根据原文件名+md5
+     *
+     * @param fileName
+     * @param md5
+     * @return
+     */
+    private final String extractFilename(String fileName, String md5) {
         String extension = getExtension(fileName);
         String newFilename;
         if (fileConstraintsProperties.getFolderRole() == true) {
-            newFilename = DateFormatUtils.format(new Date(), "/yyyy/MM/dd") + "/" + encodingFilename(fileName) + "." + extension;
+            newFilename = DateFormatUtils.format(new Date(), "/yyyy/MM/dd") + "/" + encodingFilename(fileName, md5) + "." + extension;
         } else {
-            newFilename = encodingFilename(fileName) + "." + extension;
+            newFilename = encodingFilename(fileName, md5) + "." + extension;
         }
         return newFilename;
     }
 
-    private final String encodingFilename(String fileName) {
+    /**
+     * 编码文件名
+     *
+     * @param fileName
+     * @param md5
+     * @return
+     */
+    private final String encodingFilename(String fileName, String md5) {
         fileName = fileName.replace("_", " ");
-        fileName = DigestUtils.md5Hex(fileName + UUID.randomUUID().toString() + RandomStringUtils.randomNumeric(6));
+        fileName = DigestUtils.md5Hex(fileName + md5);
         return fileName;
     }
 
+    /**
+     * 文件后缀
+     *
+     * @param originalFileName
+     * @return
+     */
     private String getExtension(String originalFileName) {
         String suffix = originalFileName.substring(originalFileName.lastIndexOf(".") + 1);
         return suffix;
     }
 
+
+    public void uploadWithBlock(String originalName, MultipartFile file, Integer chunks, Long size, Integer chunk, String md5) {
+        if (chunk >= chunks) {
+            throw new DescribeException(ResultEnum.FILE_IO_EXCEPTION);
+        }
+        BlockFile byChunkAndMd5 = blockFileService.findByChunkAndMd5(chunk, md5);
+        if (!ObjectUtils.isEmpty(byChunkAndMd5)) {
+            log.info("分片已经存在，chunk：{}，md5：{}", chunk, md5);
+            throw new DescribeException(ResultEnum.FILE_CHUNK_EXIST);
+        }
+        try {
+            InputStream inputStream = file.getInputStream();
+            String newFilename = extractFilename(originalName, md5);
+            log.info("正在上传的文件：{}，unionName：{}，第{}块，共{}块", originalName, newFilename, chunk, chunks);
+            RandomAccessFile randomAccessFile = null;
+            randomAccessFile = new RandomAccessFile(fileConstraintsProperties.getPath() + newFilename, "rw");
+            Long chunkSize = file.getSize();
+            randomAccessFile.setLength(size);
+            if (chunk == chunks - 1) {
+                randomAccessFile.seek(size - chunkSize);
+            } else {
+                randomAccessFile.seek(chunk * chunkSize);
+            }
+            byte[] buf = new byte[1024];
+            int len;
+            while (-1 != (len = inputStream.read(buf))) {
+                randomAccessFile.write(buf, 0, len);
+            }
+            randomAccessFile.close();
+            BlockFile blockFile = new BlockFile();
+            blockFile.setBlockFileChunk(chunk);
+            blockFile.setBlockFileMd5(md5);
+            blockFile.setUploadTime(new Date());
+            blockFileService.insert(blockFile);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new DescribeException(ResultEnum.FILE_IO_EXCEPTION);
+        }
+    }
 
 }

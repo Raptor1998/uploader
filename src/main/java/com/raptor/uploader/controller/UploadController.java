@@ -47,7 +47,7 @@ public class UploadController {
     }
 
     @GetMapping("/exist/{md5}")
-    public Result existByMd5(@Param(value = "md5") String md5) {
+    public Result existByMd5(@RequestParam(value = "md5") String md5) {
         FileInfo fileInfo = fileInfoService.selectByMd5(md5);
         if (!ObjectUtils.isEmpty(fileInfo)) {
             return ResultUtil.success(null);
@@ -57,8 +57,14 @@ public class UploadController {
     }
 
 
-    @GetMapping("/block/single")
-    public Result uploadBigSingleFile() {
+    @PostMapping("/block/single")
+    public Result uploadBigSingleFile(@RequestParam("originalName") String originalName,
+                                      @RequestParam("file") MultipartFile file,
+                                      @RequestParam("chunks") Integer chunks,
+                                      @RequestParam("chunk") Integer chunk,
+                                      @RequestParam("size") Long size,
+                                      @RequestParam("md5") String md5) {
+        uploaderService.uploadWithBlock(originalName, file, chunks, size, chunk, md5);
         return ResultUtil.success(null);
     }
 

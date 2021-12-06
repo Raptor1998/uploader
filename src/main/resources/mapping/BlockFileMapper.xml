@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.raptor.uploader.mapper.BlockFileMapper">
+    <resultMap id="BaseResultMap" type="com.raptor.uploader.entity.BlockFile">
+        <id column="block_file_id" jdbcType="INTEGER" property="blockFileId"/>
+        <result column="block_file_chunk" jdbcType="INTEGER" property="blockFileChunk"/>
+        <result column="block_file_md5" jdbcType="VARCHAR" property="blockFileMd5"/>
+        <result column="upload_time" jdbcType="TIMESTAMP" property="uploadTime"/>
+    </resultMap>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete
+        from block_file
+        where block_file_id = #{blockFileId,jdbcType=INTEGER}
+    </delete>
+    <insert id="insert" parameterType="com.raptor.uploader.entity.BlockFile" useGeneratedKeys="true"
+            keyProperty="block_file_id">
+        insert into block_file (block_file_chunk, block_file_md5,
+                                upload_time)
+        values (#{blockFileChunk,jdbcType=INTEGER}, #{blockFileMd5,jdbcType=VARCHAR},
+                #{uploadTime,jdbcType=TIMESTAMP})
+    </insert>
+    <update id="updateByPrimaryKey" parameterType="com.raptor.uploader.entity.BlockFile">
+        update block_file
+        set block_file_chunk = #{blockFileChunk,jdbcType=INTEGER},
+            block_file_md5   = #{blockFileMd5,jdbcType=VARCHAR},
+            upload_time      = #{uploadTime,jdbcType=TIMESTAMP}
+        where block_file_id = #{blockFileId,jdbcType=INTEGER}
+    </update>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select block_file_id, block_file_chunk, block_file_md5, upload_time
+        from block_file
+        where block_file_id = #{blockFileId,jdbcType=INTEGER}
+    </select>
+    <select id="selectAll" resultMap="BaseResultMap">
+        select block_file_id, block_file_chunk, block_file_md5, upload_time
+        from block_file
+    </select>
+    <!--    BlockFile findByChunkAndMd5(String chunk, String md5);-->
+    <select id="findByChunkAndMd5" resultMap="BaseResultMap">
+        select block_file_id, block_file_chunk, block_file_md5, upload_time
+        from block_file
+        where block_file_chunk = #{chunk}
+          and block_file_md5 = #{md5}
+    </select>
+</mapper>

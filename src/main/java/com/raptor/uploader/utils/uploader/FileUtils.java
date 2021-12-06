@@ -28,7 +28,7 @@ public class FileUtils {
     }
 
     /**
-     * 分块写入文件
+     * 分块写入文件   RandomAccessFile
      *
      * @param target
      * @param targetSize
