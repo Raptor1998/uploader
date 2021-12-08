@@ -19,11 +19,11 @@
 								{
 									"key": "file",
 									"type": "file",
-									"src": "/C:/Users/Administrator/Pictures/Camera Roll/nginx.jpg"
+									"src": "/C:/Users/Administrator/Pictures/Saved Pictures/bianfuxia22.jpg"
 								},
 								{
 									"key": "md5",
-									"value": "asd",
+									"value": "aqeq",
 									"type": "text"
 								}
 							]
@@ -87,7 +87,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/api/uploader/exist/xadsa",
+							"raw": "http://localhost:8080/api/uploader/exist/md5?md5=catmd5",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -97,7 +97,13 @@
 								"api",
 								"uploader",
 								"exist",
-								"xadsa"
+								"md5"
+							],
+							"query": [
+								{
+									"key": "md5",
+									"value": "catmd5"
+								}
 							]
 						}
 					},
@@ -118,7 +124,7 @@
 								},
 								{
 									"key": "md5",
-									"value": "asd",
+									"value": "catmd5",
 									"type": "text"
 								}
 							]
@@ -156,6 +162,302 @@
 								"uploader",
 								"getAll",
 								"files"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "block uploader",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/E:/codeDemo/uploader/files/testfile/chunks/2"
+								},
+								{
+									"key": "chunks",
+									"value": "3",
+									"type": "text"
+								},
+								{
+									"key": "chunk",
+									"value": "2",
+									"type": "text"
+								},
+								{
+									"key": "size",
+									"value": "145857545",
+									"type": "text"
+								},
+								{
+									"key": "md5",
+									"value": "catmd5456",
+									"type": "text"
+								},
+								{
+									"key": "originalName",
+									"value": "cat.jpg",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/uploader/block/single",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"uploader",
+								"block",
+								"single"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "uploader182.254.146.46",
+			"item": [
+				{
+					"name": "upload single file",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/C:/Users/Administrator/Pictures/Saved Pictures/yingmu.jpg"
+								},
+								{
+									"key": "md5",
+									"value": "yingmuhuadao",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://182.254.146.46:8080/api/uploader/single",
+							"protocol": "http",
+							"host": [
+								"182",
+								"254",
+								"146",
+								"46"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"uploader",
+								"single"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "upload multiple files",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "files",
+									"type": "file",
+									"src": [
+										"/E:/material/文档/JVM/JVM/JVM中篇：字节码与类的加载篇/第1章：class文件结构.mmap",
+										"/E:/material/文档/JVM/JVM/JVM中篇：字节码与类的加载篇/第2章：字节码指令集与解析举例.mmap",
+										"/E:/material/文档/JVM/JVM/JVM中篇：字节码与类的加载篇/第3章：类的加载过程详解.mmap",
+										"/E:/material/文档/JVM/JVM/JVM中篇：字节码与类的加载篇/第4章：再谈类的加载器.mmap"
+									]
+								}
+							]
+						},
+						"url": {
+							"raw": "http://182.254.146.46:8080/api/uploader/upload/multiple",
+							"protocol": "http",
+							"host": [
+								"182",
+								"254",
+								"146",
+								"46"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"uploader",
+								"upload",
+								"multiple"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "exist by md5",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://182.254.146.46:8080/api/uploader/exist/md5?md5=yingmuhuadao",
+							"protocol": "http",
+							"host": [
+								"182",
+								"254",
+								"146",
+								"46"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"uploader",
+								"exist",
+								"md5"
+							],
+							"query": [
+								{
+									"key": "md5",
+									"value": "yingmuhuadao"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "md5 second transfer",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "fileName",
+									"value": "haha.jpg",
+									"type": "text"
+								},
+								{
+									"key": "md5",
+									"value": "yingmuhuadao",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://182.254.146.46:8080/api/uploader/quick",
+							"protocol": "http",
+							"host": [
+								"182",
+								"254",
+								"146",
+								"46"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"uploader",
+								"quick"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "select all fileinfos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://182.254.146.46:8080/api/uploader/getAll/files",
+							"protocol": "http",
+							"host": [
+								"182",
+								"254",
+								"146",
+								"46"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"uploader",
+								"getAll",
+								"files"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "block uploader",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/E:/codeDemo/uploader/files/testfile/chunks/0"
+								},
+								{
+									"key": "chunks",
+									"value": "3",
+									"type": "text"
+								},
+								{
+									"key": "chunk",
+									"value": "0",
+									"type": "text"
+								},
+								{
+									"key": "size",
+									"value": "145857545",
+									"type": "text"
+								},
+								{
+									"key": "md5",
+									"value": "catmd5456",
+									"type": "text"
+								},
+								{
+									"key": "originalName",
+									"value": "cat.jpg",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://182.254.146.46:8080/api/uploader/block/single",
+							"protocol": "http",
+							"host": [
+								"182",
+								"254",
+								"146",
+								"46"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"uploader",
+								"block",
+								"single"
 							]
 						}
 					},

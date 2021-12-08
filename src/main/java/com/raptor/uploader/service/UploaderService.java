@@ -15,6 +15,9 @@ import org.apache.commons.lang3.time.DateFormatUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.HttpRequestHandler;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
@@ -69,7 +72,7 @@ public class UploaderService {
             return insert;
         } catch (Exception e) {
             log.error("文件保存时出错，重试");
-            e.printStackTrace();
+            log.error(e.getMessage());
             throw new DescribeException(ResultEnum.FILE_IO_EXCEPTION);
         }
     }
@@ -141,7 +144,7 @@ public class UploaderService {
         return suffix;
     }
 
-
+    @Transactional(rollbackFor = Exception.class,propagation =Propagation.REQUIRED)
     public BlockFile uploadWithBlock(String originalName, MultipartFile file, Integer chunks, Long size, Integer chunk, String md5) {
         if (chunk >= chunks) {
             throw new DescribeException(ResultEnum.FILE_IO_EXCEPTION);
@@ -153,6 +156,11 @@ public class UploaderService {
             throw new DescribeException(ResultEnum.FILE_CHUNK_EXIST);
         }
         try {
+            BlockFile blockFile = new BlockFile();
+            blockFile.setBlockFileChunk(chunk);
+            blockFile.setBlockFileMd5(md5);
+            blockFile.setUploadTime(new Date());
+            BlockFile block = blockFileService.insert(blockFile);
             InputStream inputStream = file.getInputStream();
             log.info("正在上传的文件：{}，unionName：{}，第{}块，共{}块", originalName, newFilename, chunk, chunks);
             RandomAccessFile randomAccessFile = null;
@@ -170,14 +178,11 @@ public class UploaderService {
                 randomAccessFile.write(buf, 0, len);
             }
             randomAccessFile.close();
-            BlockFile blockFile = new BlockFile();
-            blockFile.setBlockFileChunk(chunk);
-            blockFile.setBlockFileMd5(md5);
-            blockFile.setUploadTime(new Date());
-            BlockFile block = blockFileService.insert(blockFile);
             return block;
         } catch (Exception e) {
+            log.error("块保存出错");
             e.printStackTrace();
+            throw new DescribeException(ResultEnum.FILE_CHUNK_EXIST);
         } finally {
             Integer blockNum = blockFileService.selectBlockNum(md5);
             log.info("已上传块数：{}，总块数：{}", blockNum, chunks);
@@ -194,7 +199,6 @@ public class UploaderService {
                 fileInfoService.insert(fileInfo);
             }
         }
-        return null;
     }
 
 
