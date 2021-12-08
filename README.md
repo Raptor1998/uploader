@@ -9,7 +9,7 @@
 
 `/api/uploader`
 
-## upload
+## upload request process 
 
 ### second upload
 
@@ -57,11 +57,12 @@
 uploader.thread.coreSize=20
 uploader.thread.maxSize=200
 uploader.thread.keepAliveTime=10
-#文件存储的全路径
+#文件全路径
 uploader.file.path=/uploader/document/
+#uploader.file.path=E://codeDemo//uploader//files//
 #文件限制大小
 uploader.file.size=100
-#允许上传你的文件后缀名
+#文件后缀名
 uploader.file.extension=txt,doc,docx,ppt,pptx,pdf,zip,jpeg,gif,jpg,mmap,mp4,avi,
 #静态服务器
 uploader.file.prefixUrl=http://127.0.0.1:9999/document/
