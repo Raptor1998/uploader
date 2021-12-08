@@ -12,13 +12,10 @@ public interface BlockFileMapper {
 
     int insert(BlockFile record);
 
-    BlockFile selectByPrimaryKey(Integer blockFileId);
-
-    List<BlockFile> selectAll();
-
-    int updateByPrimaryKey(BlockFile record);
 
     BlockFile findByChunkAndMd5(@Param("chunk") Integer chunk, @Param("md5") String md5);
 
     Integer selectBlockNum(@Param("md5") String md5);
+
+    List<Integer> selectBlockByMd5(@Param("md5") String md5);
 }

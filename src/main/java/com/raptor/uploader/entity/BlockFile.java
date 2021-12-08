@@ -12,6 +12,8 @@ public class BlockFile implements Serializable {
 
     private Date uploadTime;
 
+    private String tempPath;
+
     private static final long serialVersionUID = 1L;
 
     public Integer getBlockFileId() {
@@ -46,18 +48,22 @@ public class BlockFile implements Serializable {
         this.uploadTime = uploadTime;
     }
 
+    public String getTempPath() {
+        return tempPath;
+    }
+
+    public void setTempPath(String tempPath) {
+        this.tempPath = tempPath;
+    }
+
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(getClass().getSimpleName());
-        sb.append(" [");
-        sb.append("Hash = ").append(hashCode());
-        sb.append(", blockFileId=").append(blockFileId);
-        sb.append(", blockFileChunk=").append(blockFileChunk);
-        sb.append(", blockFileMd5=").append(blockFileMd5);
-        sb.append(", uploadTime=").append(uploadTime);
-        sb.append(", serialVersionUID=").append(serialVersionUID);
-        sb.append("]");
-        return sb.toString();
+        return "BlockFile{" +
+                "blockFileId=" + blockFileId +
+                ", blockFileChunk=" + blockFileChunk +
+                ", blockFileMd5='" + blockFileMd5 + '\'' +
+                ", uploadTime=" + uploadTime +
+                ", tempPath='" + tempPath + '\'' +
+                '}';
     }
 }

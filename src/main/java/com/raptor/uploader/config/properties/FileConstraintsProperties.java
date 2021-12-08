@@ -1,6 +1,5 @@
 package com.raptor.uploader.config.properties;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;

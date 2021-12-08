@@ -17,7 +17,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.HttpRequestHandler;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
@@ -144,7 +143,7 @@ public class UploaderService {
         return suffix;
     }
 
-    @Transactional(rollbackFor = Exception.class,propagation =Propagation.REQUIRED)
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public BlockFile uploadWithBlock(String originalName, MultipartFile file, Integer chunks, Long size, Integer chunk, String md5) {
         if (chunk >= chunks) {
             throw new DescribeException(ResultEnum.FILE_IO_EXCEPTION);
@@ -155,12 +154,15 @@ public class UploaderService {
             log.info("分片已经存在，chunk：{}，md5：{}", chunk, md5);
             throw new DescribeException(ResultEnum.FILE_CHUNK_EXIST);
         }
+        BlockFile blockFile = new BlockFile();
+        blockFile.setBlockFileChunk(chunk);
+        blockFile.setBlockFileMd5(md5);
+        blockFile.setUploadTime(new Date());
+        blockFile.setTempPath(fileConstraintsProperties.getPath() + newFilename);
+        log.info(blockFile.toString());
+        BlockFile block = blockFileService.insert(blockFile);
+
         try {
-            BlockFile blockFile = new BlockFile();
-            blockFile.setBlockFileChunk(chunk);
-            blockFile.setBlockFileMd5(md5);
-            blockFile.setUploadTime(new Date());
-            BlockFile block = blockFileService.insert(blockFile);
             InputStream inputStream = file.getInputStream();
             log.info("正在上传的文件：{}，unionName：{}，第{}块，共{}块", originalName, newFilename, chunk, chunks);
             RandomAccessFile randomAccessFile = null;

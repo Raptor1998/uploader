@@ -9,7 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import sun.rmi.runtime.Log;
+
+import java.util.List;
 
 /**
  * @author raptor
@@ -34,7 +35,8 @@ public class BlockFileServiceImpl implements BlockFileService {
             int i = blockFileMapper.insert(blockFile);
             return blockFile;
         } catch (Exception e) {
-            log.info("分片已经存在，数据库插入时出错");
+            log.error("分片已经存在，数据库插入时出错");
+            e.printStackTrace();
             throw new DescribeException(ResultEnum.FILE_INFO_INSERT_ERROR);
         }
     }
@@ -47,5 +49,10 @@ public class BlockFileServiceImpl implements BlockFileService {
     @Override
     public Integer selectBlockNum(String md5) {
         return blockFileMapper.selectBlockNum(md5);
+    }
+
+    @Override
+    public List<Integer> selectBlockByMd5(String md5) {
+        return blockFileMapper.selectBlockByMd5(md5);
     }
 }

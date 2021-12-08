@@ -3,6 +3,8 @@ package com.raptor.uploader.service;
 import com.raptor.uploader.entity.BlockFile;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 /**
  * @author raptor
  * @description BlockFileService
@@ -14,4 +16,6 @@ public interface BlockFileService {
     BlockFile findByChunkAndMd5(Integer chunk, String md5);
 
     Integer selectBlockNum( String md5);
+
+    List<Integer> selectBlockByMd5(@Param("md5") String md5);
 }

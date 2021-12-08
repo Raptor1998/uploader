@@ -6,6 +6,7 @@
         <result column="block_file_chunk" jdbcType="INTEGER" property="blockFileChunk"/>
         <result column="block_file_md5" jdbcType="VARCHAR" property="blockFileMd5"/>
         <result column="upload_time" jdbcType="TIMESTAMP" property="uploadTime"/>
+        <result column="temp_path" jdbcType="VARCHAR" property="tempPath"/>
     </resultMap>
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
         delete
@@ -15,26 +16,10 @@
     <insert id="insert" parameterType="com.raptor.uploader.entity.BlockFile" useGeneratedKeys="true"
             keyProperty="block_file_id">
         insert into block_file (block_file_chunk, block_file_md5,
-                                upload_time)
+                                upload_time, temp_path)
         values (#{blockFileChunk,jdbcType=INTEGER}, #{blockFileMd5,jdbcType=VARCHAR},
-                #{uploadTime,jdbcType=TIMESTAMP})
+                #{uploadTime,jdbcType=TIMESTAMP}, #{tempPath, jdbcType = VARCHAR})
     </insert>
-    <update id="updateByPrimaryKey" parameterType="com.raptor.uploader.entity.BlockFile">
-        update block_file
-        set block_file_chunk = #{blockFileChunk,jdbcType=INTEGER},
-            block_file_md5   = #{blockFileMd5,jdbcType=VARCHAR},
-            upload_time      = #{uploadTime,jdbcType=TIMESTAMP}
-        where block_file_id = #{blockFileId,jdbcType=INTEGER}
-    </update>
-    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
-        select block_file_id, block_file_chunk, block_file_md5, upload_time
-        from block_file
-        where block_file_id = #{blockFileId,jdbcType=INTEGER}
-    </select>
-    <select id="selectAll" resultMap="BaseResultMap">
-        select block_file_id, block_file_chunk, block_file_md5, upload_time
-        from block_file
-    </select>
     <!--    BlockFile findByChunkAndMd5(String chunk, String md5);-->
     <select id="findByChunkAndMd5" resultMap="BaseResultMap">
         select block_file_id, block_file_chunk, block_file_md5, upload_time
@@ -46,6 +31,13 @@
     <!--    Integer selectBlockNum(@Param("md5") String md5);-->
     <select id="selectBlockNum" resultType="Integer">
         select count(block_file_id)
+        from block_file
+        where block_file_md5 = #{md5}
+    </select>
+
+    <!--    List<Integer> selectBlockByMd5(@Param("md5") String md5);-->
+    <select id="selectBlockByMd5" resultType="Integer">
+        select block_file_chunk
         from block_file
         where block_file_md5 = #{md5}
     </select>
