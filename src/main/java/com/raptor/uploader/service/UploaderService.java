@@ -21,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
 import java.util.Date;
+import java.util.UUID;
 import java.util.concurrent.ThreadPoolExecutor;
 
 /**
@@ -63,7 +64,7 @@ public class UploaderService {
             fileInfo.setFileUnionName(extractFilename);
             fileInfo.setFileRealPath(fileConstraintsProperties.getPath() + extractFilename);
             fileInfo.setFileSuffix(getExtension(file.getOriginalFilename()));
-            fileInfo.setFileUrl(extractFilename);
+            fileInfo.setFileUrl(fileConstraintsProperties.getPrefixUrl()+extractFilename);
             fileInfo.setFileSize(file.getSize());
             fileInfo.setFileUploadTime(new Date());
             fileInfo.setMd5(md5);
@@ -128,7 +129,7 @@ public class UploaderService {
      */
     private final String encodingFilename(String fileName, String md5) {
         fileName = fileName.replace("_", " ");
-        fileName = DigestUtils.md5Hex(fileName + md5);
+        fileName = DigestUtils.md5Hex(fileName + md5 + UUID.randomUUID().toString());
         return fileName;
     }
 
@@ -194,7 +195,7 @@ public class UploaderService {
                 fileInfo.setFileUnionName(newFilename);
                 fileInfo.setFileRealPath(fileConstraintsProperties.getPath() + newFilename);
                 fileInfo.setFileSuffix(getExtension(originalName));
-                fileInfo.setFileUrl(newFilename);
+                fileInfo.setFileUrl(fileConstraintsProperties+newFilename);
                 fileInfo.setFileSize(size);
                 fileInfo.setFileUploadTime(new Date());
                 fileInfo.setMd5(md5);

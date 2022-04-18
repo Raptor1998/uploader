@@ -60,7 +60,7 @@ public class FileInfoServiceImpl implements FileInfoService {
         FileInfo fileInfo = fileInfoMapper.selectByMd5(md5);
         if (ObjectUtils.isEmpty(fileInfo)) {
             log.info("文件的md5值不存在,{}", md5);
-            throw new DescribeException(ResultEnum.FILE_IO_EXCEPTION);
+            throw new DescribeException(ResultEnum.FILE_NOT_EXIST_SECONDS);
         }
         log.info("已存在的文件，md5:{}", md5);
         FileInfo fileInfoUp = new FileInfo();

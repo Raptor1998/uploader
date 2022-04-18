@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * @author raptor
@@ -37,8 +40,22 @@ public class UploadController {
      */
     @PostMapping("/single")
     public Result uploadSingleFile(@RequestParam("file") MultipartFile file, @RequestParam(value = "md5", required = false) String md5) {
+        if (md5 == null || "".equals(md5)) {
+            md5 = UUID.randomUUID().toString().substring(0, 32);
+        }
         FileInfo fileInfo = uploaderService.saveFile(file, md5);
         return ResultUtil.success(fileInfo);
+    }
+
+    @PostMapping("/multiple")
+    public Result uploadmultipleFile(@RequestParam("files") MultipartFile[] files) {
+        List<FileInfo> res = new ArrayList<>();
+        for (MultipartFile multipartFile : files) {
+            //随机生成一个md5
+            FileInfo fileInfo = uploaderService.saveFile(multipartFile, UUID.randomUUID().toString().substring(0, 32));
+            res.add(fileInfo);
+        }
+        return ResultUtil.success(res);
     }
 
     /**
@@ -64,7 +81,7 @@ public class UploadController {
     public Result existByMd5(@RequestParam(value = "md5") String md5) {
         FileInfo fileInfo = fileInfoService.selectByMd5(md5);
         if (!ObjectUtils.isEmpty(fileInfo)) {
-            return ResultUtil.success(null);
+            return ResultUtil.success(fileInfo);
         } else {
             return ResultUtil.defineFail(ResultEnum.FILE_NOT_EXIST);
         }

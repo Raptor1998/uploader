@@ -12,7 +12,7 @@ public class DescribeException extends ServiceException {
 
     public DescribeException(ResultEnum resultEnum) {
         super(resultEnum.getCode(), resultEnum.getMsg());
-        this.statusCode = HttpStatus.BAD_REQUEST;
+        this.statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
     }
 
 }
