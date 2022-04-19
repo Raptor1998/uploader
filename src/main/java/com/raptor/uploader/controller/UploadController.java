@@ -48,14 +48,25 @@ public class UploadController {
     }
 
     @PostMapping("/multiple")
-    public Result uploadmultipleFile(@RequestParam("files") MultipartFile[] files) {
-        List<FileInfo> res = new ArrayList<>();
-        for (MultipartFile multipartFile : files) {
-            //随机生成一个md5
-            FileInfo fileInfo = uploaderService.saveFile(multipartFile, UUID.randomUUID().toString().substring(0, 32));
-            res.add(fileInfo);
+    public Result uploadmultipleFile(@RequestParam("files") MultipartFile[] files, @RequestParam("md5s") String[] md5s) {
+        if (md5s.length == 0 || md5s.length < files.length) {
+            List<FileInfo> res = new ArrayList<>();
+            for (MultipartFile multipartFile : files) {
+                //随机生成一个md5
+                FileInfo fileInfo = uploaderService.saveFile(multipartFile, UUID.randomUUID().toString().substring(0, 32));
+                res.add(fileInfo);
+            }
+            return ResultUtil.success(res);
+        }else {
+            List<FileInfo> res = new ArrayList<>();
+            int index = 0;
+            for (MultipartFile multipartFile : files) {
+                FileInfo fileInfo = uploaderService.saveFile(multipartFile, md5s[index++]);
+                res.add(fileInfo);
+            }
+            return ResultUtil.success(res);
         }
-        return ResultUtil.success(res);
+
     }
 
     /**

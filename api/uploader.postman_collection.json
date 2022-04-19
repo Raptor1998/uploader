@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "74609446-f956-4bcf-b399-7477830af3b6",
+		"_postman_id": "f861fe2e-a09a-4d08-b36b-23e4a1915686",
 		"name": "uploader",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -19,12 +19,7 @@
 								{
 									"key": "file",
 									"type": "file",
-									"src": "/C:/Users/Administrator/Pictures/Saved Pictures/bianfuxia22.jpg"
-								},
-								{
-									"key": "md5",
-									"value": "aqeq",
-									"type": "text"
+									"src": "/C:/Users/Administrator/Pictures/Saved Pictures/ChMkK2JWLzaIT2J1ABarkyx7MdoAACaigOUDlQAFqur974.jpg"
 								}
 							]
 						},
@@ -56,16 +51,19 @@
 									"key": "files",
 									"type": "file",
 									"src": [
-										"/E:/material/文档/JVM/JVM/JVM中篇：字节码与类的加载篇/第1章：class文件结构.mmap",
-										"/E:/material/文档/JVM/JVM/JVM中篇：字节码与类的加载篇/第2章：字节码指令集与解析举例.mmap",
-										"/E:/material/文档/JVM/JVM/JVM中篇：字节码与类的加载篇/第3章：类的加载过程详解.mmap",
-										"/E:/material/文档/JVM/JVM/JVM中篇：字节码与类的加载篇/第4章：再谈类的加载器.mmap"
+										"/C:/Users/Administrator/Pictures/Saved Pictures/ChMkK2JWLzaIT2J1ABarkyx7MdoAACaigOUDlQAFqur974.jpg",
+										"/C:/Users/Administrator/Pictures/Saved Pictures/ChMkLGJWLy6IDxNiACmK9qDxrhIAACaigEecyQAKYsO352.jpg"
 									]
+								},
+								{
+									"key": "md5s",
+									"value": "asd,asdxz",
+									"type": "default"
 								}
 							]
 						},
 						"url": {
-							"raw": "http://localhost:8080/api/uploader/upload/multiple",
+							"raw": "http://localhost:8080/api/uploader/multiple",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -74,7 +72,6 @@
 							"path": [
 								"api",
 								"uploader",
-								"upload",
 								"multiple"
 							]
 						}
@@ -124,7 +121,7 @@
 								},
 								{
 									"key": "md5",
-									"value": "catmd5",
+									"value": "aqeq",
 									"type": "text"
 								}
 							]
@@ -240,7 +237,7 @@
 								{
 									"key": "file",
 									"type": "file",
-									"src": "/C:/Users/Administrator/Pictures/Saved Pictures/yingmu.jpg"
+									"src": "/C:/Users/Administrator/Pictures/Saved Pictures/ChMkLGJWLyKIO5dWAA8lNnf8BmkAACaiQKXhhAADyVO046.jpg"
 								},
 								{
 									"key": "md5",
@@ -280,16 +277,19 @@
 									"key": "files",
 									"type": "file",
 									"src": [
-										"/E:/material/文档/JVM/JVM/JVM中篇：字节码与类的加载篇/第1章：class文件结构.mmap",
-										"/E:/material/文档/JVM/JVM/JVM中篇：字节码与类的加载篇/第2章：字节码指令集与解析举例.mmap",
-										"/E:/material/文档/JVM/JVM/JVM中篇：字节码与类的加载篇/第3章：类的加载过程详解.mmap",
-										"/E:/material/文档/JVM/JVM/JVM中篇：字节码与类的加载篇/第4章：再谈类的加载器.mmap"
+										"/C:/Users/Administrator/Pictures/Saved Pictures/ChMkK2JWLzaIT2J1ABarkyx7MdoAACaigOUDlQAFqur974.jpg",
+										"/C:/Users/Administrator/Pictures/Saved Pictures/ChMkLGJWLy6IDxNiACmK9qDxrhIAACaigEecyQAKYsO352.jpg"
 									]
+								},
+								{
+									"key": "md5s",
+									"value": "[\"asdas\",\"qweqwqw\"]",
+									"type": "default"
 								}
 							]
 						},
 						"url": {
-							"raw": "http://182.254.146.46:8080/api/uploader/upload/multiple",
+							"raw": "http://182.254.146.46:8080/api/uploader/multiple",
 							"protocol": "http",
 							"host": [
 								"182",
@@ -301,7 +301,6 @@
 							"path": [
 								"api",
 								"uploader",
-								"upload",
 								"multiple"
 							]
 						}
