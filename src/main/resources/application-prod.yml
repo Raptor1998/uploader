@@ -15,9 +15,9 @@ spring:
       max-file-size: 1000MB
       max-request-size: 1000MB
   datasource:
-    url: jdbc:mysql://sh-cynosdbmysql-grp-rjz587zw.sql.tencentcdb.com:27204/uploader?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8&useSSL=true&serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://127.0.0.1:3306/uploader?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8&useSSL=true&serverTimezone=Asia/Shanghai
     username: root
-    password: Cwh032308....
+    password: 123456
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jackson:
