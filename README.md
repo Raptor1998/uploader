@@ -101,9 +101,10 @@ CREATE TABLE `file_info`  (
                               `file_size` bigint(20) NOT NULL COMMENT '文件大小',
                               `file_upload_time` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '上传时间',
                               `md5` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '文件的md5值',
-                              PRIMARY KEY (`file_id`) USING BTREE,
-                              UNIQUE INDEX `file_union_name`(`file_union_name`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
+                              PRIMARY KEY (`file_id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 16 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
+
+SET FOREIGN_KEY_CHECKS = 1;
 
 ```
 
